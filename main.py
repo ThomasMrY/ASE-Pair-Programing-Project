@@ -7,6 +7,7 @@ group = parser.add_mutually_exclusive_group()
 group.add_argument('-f','--countWords', help="Output word frequencies",action = "store_true")
 group.add_argument('-c','--countChar', help="Output character frequencies",action = "store_true")
 group.add_argument('-p','--phraseNum', help="Output phrase frequencies")
+group.add_argument('-q','--preName', help="Output PREPOSITION pair frequencies")
 parser.add_argument('-v','--verbFile', help="Verb file to normalize the veb tenses",default=None)
 parser.add_argument('-d','--dirFlag', help="Treat the <file name> as an directory",action = "store_true")
 parser.add_argument('-s','--reFlag', help="Verb file to normalize the veb tenses",action = "store_true")
@@ -32,5 +33,10 @@ if(__name__ == '__main__'):
             Count.OperateInDir(Count.CountPhrases, args.path, int(args.num), args.stopFile, args.verbFile, args.reFlag,int(args.phraseNum))
         else:
             Count.CountPhrases(args.path, int(args.num), args.stopFile, args.verbFile,int(args.phraseNum))
+    elif (args.preName):
+        if (args.dirFlag):
+            Count.OperateInDir(Count.CountVerbPre, args.path, int(args.num), args.stopFile, args.verbFile, args.reFlag,args.preName)
+        else:
+            Count.CountVerbPre(args.path, int(args.num), args.stopFile, args.verbFile,args.preName)
     else:
         print("Error: Please input the operation type (-f|-q|-p|-c)")

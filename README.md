@@ -554,3 +554,73 @@ here output example: here we use file "gone with the wind" as an exmaple:
 	|go to                   |0.45%                   |
 	----------------------------------------------------
 	Time Consuming:1.975673
+
+## STEP-5: Counting "Verb Phrases" (v-siyual)
+
+Here is the specification for Step 5.
+Let's implement a new feature: counting verb phrases.
+```
+Usage: wf -q <preposition-list> -v <verb-dict> <path>
+```
+
+We'll count only "Verb Phrases", the definition of which is as follows:
+```
+VerbPhrase := Verb + Spaces + Preposition
+Spaces := Space+
+Space := ' ' | '\t' | '\r' | '\n'
+Preposition := <any one from the list of prepositions>
+Verb := <any one in any tense FROM THE DICTIONARY>
+```
+Read the two sections above to get the list of prepositions and the verb dictionary.
+
+###Usage
+The Arguements
+	usage: main.py [-h] [-f | -c | -p PHRASENUM | -q PRENAME] [-v VERBFILE] [-d]
+	               [-s] [-n NUM] [-x STOPFILE]
+	               path
+	
+	positional arguments:
+	  path                  The file/directory to be operated with
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -f, --countWords      Output word frequencies
+	  -c, --countChar       Output character frequencies
+	  -p PHRASENUM, --phraseNum PHRASENUM
+	                        Output phrase frequencies
+	  -q PRENAME, --preName PRENAME
+	                        Output PREPOSITION pair frequencies
+	  -v VERBFILE, --verbFile VERBFILE
+	                        Verb file to normalize the veb tenses
+	  -d, --dirFlag         Treat the <file name> as an directory
+	  -s, --reFlag          Verb file to normalize the veb tenses
+	  -n NUM, --num NUM     Output only the top <num> iterms
+	  -x STOPFILE, --stopFile STOPFILE
+	                        Use <stop word> as a list of stop words, which are
+	                        ignored in the count
+
+Count the occurrences of verb + prepostion in <file name> after the verb form unified:
+
+```
+python main.py -f -v <verb file> <file name>
+```
+
+Here we take "gone with the wind" as an example:
+
+	C:\Users\lenovo\Desktop\ASE\project>python main.py -q prepositions.txt -v verbs.txt gone_with_the_wind.txt
+	File name:gone_with_the_wind.txt
+	----------------------------------------------------
+	|                  The Rank List                  |
+	|VerbPre                 |Frequency               |
+	|go to                   |0.45%                   |
+	|want to                 |0.27%                   |
+	|be in                   |0.25%                   |
+	|think of                |0.23%                   |
+	|try to                  |0.23%                   |
+	|have to                 |0.23%                   |
+	|look at                 |0.17%                   |
+	|come to                 |0.16%                   |
+	|back to                 |0.11%                   |
+	|be as                   |0.11%                   |
+	----------------------------------------------------
+	Time Consuming:1.318331

@@ -1,10 +1,11 @@
 import re
 import time
 from collections import Counter
+import operator as op
 import os
 
-letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'\
-          ,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+          #,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
 ###################################################################################
 #Name:count_letters
@@ -13,30 +14,44 @@ letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','
 #Author: Thomas
 #Date:2018.10.22
 ###################################################################################
-def CountLetters(file_name):
+def CountLetters(file_name,n,stopName,verbName):
+    print("File name:" + file_name)
+    if (stopName != None):
+        stopflag = True
+    else:
+        stopflag = False
+    if(verbName != None):
+        print("Verb tenses normalizing is not supported in this function!")
+    else:
+        pass
     totalNum = 0
     dicNum = {}
     t0 = time.clock()
+    if (stopflag == True):
+        with open(stopName) as f:
+            stoplist = f.readlines()
+            stopNum = len(stoplist)
     with open(file_name) as f:
-        txt = f.read()
+        txt = f.read().lower()
     for letter in letters:
         dicNum[letter] = txt.count(letter) #here count is faster than re
         totalNum += dicNum[letter]
-    t1 = time.clock()
     for letter in letters:
-        dicNum[letter] = dicNum[letter]/totalNum
-    dicNum = sorted(dicNum.items(), key = lambda k: k[1],reverse=True)
-    t2 = time.clock()
-    # print(l_num)
-    # print(dic_num)
-    # print(t1-t0)
-    # print(t2-t1)
-    print("--------------------------")
-    print("|     The rank list      |")
-    print("|   Letter   | Frequency |")
-    for letter,fre in dicNum:
-        print("|\t   %s | %.2f      |"%(letter,fre))
-    print("--------------------------")
+        dicNum[letter] = dicNum[letter]
+    if (stopflag == True):
+        for word in stoplist:
+            word = word.replace('\n','')
+            try:
+                del dicNum[word]
+            except:
+                pass
+    dicNum = sorted(dicNum.items(), key=lambda k: k[0])
+    dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
+    t1 = time.clock()
+    display(dicNum[:n],'character',totalNum,9)
+    print("Time Consuming:%4f" % (t1 - t0))
+
+
 ###################################################################################
 #Name:count_words
 #Inputs:file name,the first n words, stopfile name
@@ -45,8 +60,7 @@ def CountLetters(file_name):
 #Date:2018.10.22
 ###################################################################################
 def CountWords(file_name,n,stopName,verbName):
-    dicNum = {}
-    totalNum = 0
+    print("File name:" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -66,15 +80,15 @@ def CountWords(file_name,n,stopName,verbName):
     pattern = r"[a-z][a-z0-9]*"
     wordList = re.findall(pattern,txt)
     totalNum = len(wordList)
+    tempc = Counter(wordList)
     if (stopflag == True):
-        tempc = Counter(wordList)
-        dicNum = dict(tempc.most_common(n+stopNum))
         for word in stoplist:
             word = word.replace('\n','')
-            del dicNum[word]
-    else:
-        tempc = Counter(wordList)
-        dicNum = dict(tempc.most_common(n))
+            try:
+                del tempc[word]
+            except:
+                pass
+    dicNum = dict(tempc.most_common(n))
     if (verbflag == True):
         totalNum = 0
         verbDic = {}
@@ -87,25 +101,34 @@ def CountWords(file_name,n,stopName,verbName):
                 for word in verbDic[key]:
                     verbDicNum[key] += tempc[word]
                 totalNum += verbDicNum[key]
-        verbDicNum = sorted(verbDicNum.items(), key=lambda k: k[1], reverse=True)
-    dicNum = sorted(dicNum.items(), key=lambda k: k[1], reverse=True)
+        verbDicNum = sorted(dicNum.items(), key=lambda k: k[0])
+        verbDicNum = sorted(verbDicNum, key=lambda k: k[1], reverse=True)
+    dicNum = sorted(dicNum.items(), key=lambda k:k[0])
+    dicNum = sorted(dicNum, key=lambda k:k[1], reverse=True)
     t1 = time.clock()
     if (verbflag == True):
-        print("--------------------------------")
-        print("|         The rank list        |")
-        print("|   Word           | Frequency |")
-        for word, fre in verbDicNum[:n]:
-            print("|\t{:15}|{:<11.2f}|".format(word, fre / totalNum))
-        print("--------------------------------")
+        display(verbDicNum[:n], 'words',totalNum,3)
     else:
-        print("----------------------")
-        print("|   The rank list    |")
-        print("|   Word | Frequency |")
-        for word, fre in dicNum:
-            print("|\t{:5}|{:<11.2f}|" .format(word, fre/totalNum))
-        print("----------------------")
+        display(dicNum,'words',totalNum,3)
+    print("Time Consuming:%4f" % (t1 - t0))
 
-    # print(t1-t0)
+def display(dicNum,type,totalNum,k):
+    maxLen = 0
+    if(not dicNum):
+        print("Error:Nothing matched!!")
+        return
+    for word, fre in dicNum:
+        if(len(word)>maxLen):
+            maxLen = len(word)
+    print("-"*int(2.18*k*maxLen))
+    formatstr = "|{:^" + str(2*k * maxLen+1) + "}|"
+    print(formatstr.format('The Rank List'))
+    formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + "}|"
+    print(formatstr.format(type, "Frequency"))
+    formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + ".2%}|"
+    for word, fre in dicNum:
+        print(formatstr.format(word, fre/totalNum))
+    print("-" * int(2.18*k * maxLen))
 
 ###################################################################################
 #Name:CountWordsInDir
@@ -114,154 +137,20 @@ def CountWords(file_name,n,stopName,verbName):
 #Author: Thomas
 #Date:2018.10.22
 ###################################################################################
-def CountWordsInDir(Dir_name,flag,n,stopName,verbName):
-    if(flag):
-        for path, _, filelist in g:
-            for filename in filelist:
-                CountWords(os.path.join(path, filename),n,stopName,verbName)
+def OperateInDir(Fuc,Dir_name,n,stopName,verbName,reflag,*arges):
+    if(reflag):
+        for path, _, filelist in os.walk(Dir_name):
+            for file in filelist:
+                if(arges):
+                    Fuc(os.path.join(path, file), n, stopName, verbName,arges[0])
+                else:
+                    Fuc(os.path.join(path, file),n,stopName,verbName)
     else:
         for file in os.listdir(Dir_name):
-            CountWords(file,n,stopName,verbName)
-
-###################################################################################
-#Name:count_words
-#Inputs:file name,the first n words, stopfile name
-#outputs:None
-#Author: Thomas
-#Date:2018.10.22
-###################################################################################
-def CountPhrases(file_name,k,n,stopName,verbName):
-    dicNum = {}
-    totalNum = 0
-    if (stopName != None):
-        stopflag = True
-    else:
-        stopflag = False
-    if(verbName != None):
-        verbflag = True
-    else:
-        verbflag = False
-    t0 = time.clock()
-    with open(file_name) as f:
-        txt = f.read()
-    txt = txt.lower()
-    pword = r'(([a-z]+\s+)+[a-z]+)'  # extract sentence
-    pattern = re.compile(pword)
-    sentence = pattern.findall(txt)
-    txt = ','.join([sentence[m][0] for m in range(len(sentence))])
-    if(stopflag == True):
-        with open(stopName) as f:
-            stoplist = f.readlines()
-            stopNum = len(stoplist)
-    pattern = "[a-z]+[0-9]*"
-    for i in range(k-1):
-        pattern += "[^a-z0-9]+[a-z]+[0-9]*"
-    wordList = []
-    for i in range(k):
-        if( i == 0 ):
-            tempList = re.findall(pattern, txt)
-        else:
-            wordpattern = "[a-z]+[0-9]*"
-            txt = re.sub(wordpattern, '', txt, 1).strip()
-            tempList = re.findall(pattern, txt)
-        wordList += tempList
-    if (stopflag == True):
-        tempc = Counter(wordList)
-        dicNum = dict(tempc.most_common(n+stopNum))
-        for word in stoplist:
-            word = word.replace('\n','')
-            del dicNum[word]
-    else:
-        tempc = Counter(wordList)
-        # totalNum = sum([tempc[x] for x in tempc.keys() if ',' not in x])
-        # print(totalNum)
-        dicNum = dict(tempc.most_common(n))
-    if (verbflag == True):
-        totalNum = 0
-        verbDic = {}
-        verbDicNum = {}
-        with open(verbName) as f:
-            for line in f.readlines():
-                key,value = line.split(' -> ')
-                verbDic[key] = value.replace('\n','').split(',')
-                verbDicNum[key] = tempc[key]
-                for word in verbDic[key]:
-                    verbDicNum[key] += tempc[word]
-                totalNum += verbDicNum[key]
-        verbDicNum = sorted(verbDicNum.items(), key=lambda k: k[1], reverse=True)
-    dicNum = sorted(dicNum.items(), key=lambda k: k[1], reverse=True)
-    t1 = time.clock()
-    if (verbflag == True):
-        print("--------------------------------")
-        print("|         The rank list        |")
-        print("|   Word           | Frequency |")
-        for word, fre in verbDicNum[:n]:
-            print("|\t{:15}|{:<11.2f}|".format(word, fre))
-        print("--------------------------------")
-    else:
-        print("----------------------------")
-        print("|      The rank list       |")
-        print("|   Word   | Frequency     |")
-        for word, fre in dicNum:
-            print("|\t{:5}|{:<11.2f}|" .format(word, fre))
-        print("-----------------------------")
-    print(t1-t0)
-
-###################################################################################
-#Name:CountWordsInDir
-#Inputs:directory name,flag, the first n words, stopfile name
-#outputs:None
-#Author: Thomas
-#Date:2018.10.22
-###################################################################################
-def CountPhrasesInDir(Dir_name,k,flag,n,stopName,verbName):
-    if(flag):
-        for path, _, filelist in g:
-            for filename in filelist:
-                CountPhrases(os.path.join(path, filename),k,n,stopName,verbName)
-    else:
-        for file in os.listdir(Dir_name):
-            CountPhrases(file,k,n,stopName,verbName)
-
-###################################################################################
-#Name:count_words
-#Inputs:file name,the first n words, stopfile name
-#outputs:None
-#Author: Thomas
-#Date:2018.10.22
-###################################################################################
-def CountPreposition(file_name,n,stopName,verbName,prepositionName):
-    dicNum = {}
-    totalNum = 0
-    if (stopName != None):
-        stopflag = True
-    else:
-        stopflag = False
-    if(verbName != None):
-        verbflag = True
-    else:
-        verbflag = False
-    t0 = time.clock()
-    with open(file_name) as f:
-        txt = f.read()
-    txt = txt.lower()
-    with open(prepositionName) as f:
-        pre = f.read()
-    preList = pre.split('\n')
-    verbDic = {}
-    with open(verbName) as f:
-        for line in f.readlines():
-            key, value = line.split(' -> ')
-            verbDic[key] = value.replace('\n', '').split(',')
-            verbDic[key].append(key)
-            pattern = '|'.join(verbDic[key]) + r"[\s|\t|\r|\n]+"
-            for prew in preList:
-                patternpre = pattern + prew
-                dicNum[key+' '+pre] = len(re.findall(patternpre,txt))
-                print(dicNum[key+' '+pre])
-    print(dicNum)
-#
-# CountLetters('gone_with_the_wind.txt')
-# CountWords('gone_with_the_wind.txt',10,None,None)
-# CountPhrases('gone_with_the_wind.txt',2,10,None,None)
-# CountPreposition('gone_with_the_wind.txt',10,None,'verbs.txt','prepositions.txt')
+            if(os.path.isdir(os.path.join(Dir_name, file))):
+                pass
+            else:
+                if (arges):
+                    Fuc(os.path.join(Dir_name, file), n, stopName, verbName, arges[0])
+                else:
+                    Fuc(os.path.join(Dir_name, file), n, stopName, verbName)

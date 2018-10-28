@@ -1,5 +1,5 @@
 
-#title: The ASE Pair Project (MSRA)
+# title: The ASE Pair Project (MSRA)
 
 -----
 How is the 26-letter frequency of English distributed in a novel? What are the words that often appear in a type of article? What is the most commonly used term for a writer? What is the most commonly used phrase in Harry Potter, and so on. We will write some procedures to solve this problem and satisfy our curiosity.
@@ -365,4 +365,56 @@ The output example: here we use file "gone_with_the_wind.txt" as an exmaple:
 	|his         |0.74%       |
 	--------------------------
 	Time Consuming:0.420848
+
+## STEP2:  Support stop words
+
+We see from the results of the first step, in a novel, the highest frequency of the word is generally "a",  "it",  "The", "and",  "This", these words, we are not interested.  We can do a stop Word file (the word stop), and in statistical terms, skip these words. We call this file  "stopwords.txt" files.
+
+### Usage:
+The Arguements
+
+	usage: main.py [-h] [-f | -c] [-d] [-s] [-n NUM] [-x STOPFILE] path
+	
+	positional arguments:
+	  path                  The file/directory to be operated with
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -f, --countWords      Output word frequencies
+	  -c, --countChar       Output character frequencies
+	  -d, --dirFlag         Treat the <file name> as an directory
+	  -s, --reFlag          Verb file to normalize the veb tenses
+	  -n NUM, --num NUM     Output only the top <num> iterms
+	  -x STOPFILE, --stopFile STOPFILE
+	                        Use <stop word> as a list of stop words, which are
+	                        ignored in the count
+
+Output the words frenquency of file name with ignoring the words in <STOPFILE>:
+
+```
+python main.py -x <stopfile> -f <file name>
+```
+
+he output example: here we use file "gone with the wind" as an exmaple:
+
+	C:\Users\lenovo\Desktop\ASE\project>python main.py -x stopwords.txt -f gone_with_the_wind.txt
+	File name:gone_with_the_wind.txt
+	--------------------------
+	|      The Rank List      |
+	|words       |Frequency   |
+	|a           |1.81%       |
+	|in          |1.42%       |
+	|was         |1.41%       |
+	|i           |1.27%       |
+	|you         |1.24%       |
+	|he          |1.16%       |
+	|that        |1.08%       |
+	|had         |1.06%       |
+	|it          |1.06%       |
+	|s           |0.89%       |
+	--------------------------
+	Time Consuming:0.413195
+
+The words in the <STOPFILE>:  
+the, and, to, of, she, her
 

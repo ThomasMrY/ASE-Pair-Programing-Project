@@ -101,7 +101,7 @@ def CountWords(file_name,n,stopName,verbName):
                 for word in verbDic[key]:
                     verbDicNum[key] += tempc[word]
                 totalNum += verbDicNum[key]
-        verbDicNum = sorted(dicNum.items(), key=lambda k: k[0])
+        verbDicNum = sorted(verbDicNum.items(), key=lambda k: k[0])
         verbDicNum = sorted(verbDicNum, key=lambda k: k[1], reverse=True)
     dicNum = sorted(dicNum.items(), key=lambda k:k[0])
     dicNum = sorted(dicNum, key=lambda k:k[1], reverse=True)

@@ -472,3 +472,85 @@ here output example: here we use file "gone with the wind" as an exmaple:
 	---------------------------------------------
 	Time Consuming:1.742989
 
+## STEP-4: The verb form is unified before counting.
+
+We want to find commonly used words and phrases, but found that English verbs often change in the state and voice, resulting in the same word, the same phrase is considered different. Therefore, we need to unify the verb forms and count them.
+
+**e.g.**Verb take has a variety of the following variants  
+**Take** takes took taken taking 
+
+We hope that in implementing the various functions above, there is an option, that is, the various variants of the verb are attributed to its prototype to count.
+
+### Usage
+The Arguements
+	usage: main.py [-h] [-f | -c | -p PHRASENUM] [-v VERBFILE] [-d] [-s] [-n NUM]
+	               [-x STOPFILE]
+	               path
+	
+	positional arguments:
+	  path                  The file/directory to be operated with
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -f, --countWords      Output word frequencies
+	  -c, --countChar       Output character frequencies
+	  -p PHRASENUM, --phraseNum PHRASENUM
+	                        Output phrase frequencies
+	  -v VERBFILE, --verbFile VERBFILE
+	                        Verb file to normalize the veb tenses
+	  -d, --dirFlag         Treat the <file name> as an directory
+	  -s, --reFlag          Verb file to normalize the veb tenses
+	  -n NUM, --num NUM     Output only the top <num> iterms
+	  -x STOPFILE, --stopFile STOPFILE
+	                        Use <stop word> as a list of stop words, which are
+	                        ignored in the count
+
+Count the occurrences of words in <file name> after the verb form unified:
+
+```
+python main.py -f -v <verb file> <file name>
+```
+
+
+Count the occurrences of <k\> words phrases in <file name> after the verb form unified:
+
+```
+python main.py -p k -v <verb file> <file name>
+```
+
+here output example: here we use file "gone with the wind" as an exmaple:
+
+	C:\Users\lenovo\Desktop\ASE\project>python main.py -f -v verbs.txt gone_with_the_wind.txt
+	File name:gone_with_the_wind.txt
+	--------------------------------
+	|         The Rank List         |
+	|words          |Frequency      |
+	|be             |10.72%         |
+	|have           |5.73%          |
+	|do             |1.97%          |
+	|say            |1.58%          |
+	|go             |1.48%          |
+	|know           |1.33%          |
+	|think          |1.17%          |
+	|come           |1.03%          |
+	|like           |0.90%          |
+	|see            |0.88%          |
+	--------------------------------
+	Time Consuming:0.528598
+	C:\Users\lenovo\Desktop\ASE\project>python main.py -p 2 -v verbs.txt gone_with_the_wind.txt
+	File name:gone_with_the_wind.txt
+	----------------------------------------------------
+	|                  The Rank List                  |
+	|Phrases                 |Frequency               |
+	|she have                |0.85%                   |
+	|have be                 |0.72%                   |
+	|it be                   |0.69%                   |
+	|she be                  |0.65%                   |
+	|be a                    |0.63%                   |
+	|there be                |0.58%                   |
+	|he be                   |0.57%                   |
+	|do not                  |0.45%                   |
+	|to be                   |0.45%                   |
+	|go to                   |0.45%                   |
+	----------------------------------------------------
+	Time Consuming:1.975673

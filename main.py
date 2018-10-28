@@ -1,12 +1,13 @@
 import argparse
 from basic import Count
+import sys
 
 
 parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-f','--countWords', help="Output word frequencies",action = "store_true")
 group.add_argument('-c','--countChar', help="Output character frequencies",action = "store_true")
-group.add_argument('-p','--phraseNum', help="Output phrase frequencies")
+group.add_argument('-p','--phraseNum', help="Output phrase frequencies",type = int,default=0)
 group.add_argument('-q','--preName', help="Output PREPOSITION pair frequencies")
 parser.add_argument('-v','--verbFile', help="Verb file to normalize the veb tenses",default=None)
 parser.add_argument('-d','--dirFlag', help="Treat the <file name> as an directory",action = "store_true")
@@ -18,6 +19,12 @@ parser.add_argument('path', help="The file/directory to be operated with")
 
 if(__name__ == '__main__'):
     args = parser.parse_args()
+    if args.phraseNum < 0:
+        print("Error: The num of words in a phrase should not be negative!!")
+        sys.exit()
+    if args.num < 0:
+        print("Error: The num of the iterms output should not be negative!!")
+        sys.exit()
     if (args.countWords):
         if(args.dirFlag):
             Count.OperateInDir(Count.CountWords,args.path, int(args.num), args.stopFile, args.verbFile,args.reFlag)

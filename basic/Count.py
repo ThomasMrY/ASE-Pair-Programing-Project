@@ -3,6 +3,7 @@ import time
 from collections import Counter
 import operator as op
 import os
+import sys
 
 letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
           #,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
@@ -15,7 +16,7 @@ letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','
 #Date:2018.10.22
 ###################################################################################
 def CountLetters(file_name,n,stopName,verbName):
-    print("File name:" + file_name)
+    print("File name:" + sys.path[0] + "\\" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -60,7 +61,7 @@ def CountLetters(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountWords(file_name,n,stopName,verbName):
-    print("File name:" + file_name)
+    print("File name:" + sys.path[0] + "\\" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -120,7 +121,7 @@ def CountWords(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountPhrases(file_name,n,stopName,verbName,k):
-    print("File name:" + file_name)
+    print("File name:" + sys.path[0] + "\\" + file_name)
     totalNum = 0
     if (stopName != None):
         stopflag = True
@@ -175,23 +176,16 @@ def CountPhrases(file_name,n,stopName,verbName,k):
         for phrase in tempc.keys():
             if (',' not in phrase):
                 totalNum += 1
-                verba, verbb = phrase.split(' ')
-                if (verba in verbDic.keys() and verbb in verbDic.keys()):
-                    normPhrase = verbDic[verba] + ' ' + verbDic[verbb]
-                    changeFlag = True
-                elif (verba in verbDic.keys()):
-                    changeFlag = True
-                    normPhrase = verbDic[verba] + ' ' + verbb
-                elif (verbb in verbDic.keys()):
-                    changeFlag = True
-                    normPhrase =  verba + ' ' + verbDic[verbb]
+                verbList = phrase.split(' ')
+                normPhrase = verbList[0]
+                for verb in verbList[1:]:
+                    if verb in verbDic.keys():
+                        verb = verbDic[verb]
+                    normPhrase += ' ' + verb
+                if (normPhrase in dicNum.keys()):
+                    dicNum[normPhrase] += tempc[phrase]
                 else:
-                    changeFlag = False
-                if (changeFlag):
-                    if(normPhrase in dicNum.keys()):
-                        dicNum[normPhrase] += tempc[phrase]
-                    else:
-                        dicNum[normPhrase] = tempc[phrase]
+                    dicNum[normPhrase] = tempc[phrase]
     else:
         phrases = tempc.keys()
         for phrase in phrases:
@@ -212,7 +206,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
 #Date:2018.10.22
 ###################################################################################
 def CountVerbPre(file_name,n,stopName,verbName,preName):
-    print("File name:" + file_name)
+    print("File name:" + sys.path[0] + "\\" + file_name)
     dicNum = {}
     totalNum = 0
     if (stopName != None):
@@ -305,19 +299,11 @@ def display(dicNum,type,totalNum,k):
 #Date:2018.10.22
 ###################################################################################
 def OperateInDir(Fuc,Dir_name,n,stopName,verbName,reflag,*arges):
-    if(reflag):
         for path, _, filelist in os.walk(Dir_name):
             for file in filelist:
                 if(arges):
                     Fuc(os.path.join(path, file), n, stopName, verbName,arges[0])
                 else:
                     Fuc(os.path.join(path, file),n,stopName,verbName)
-    else:
-        for file in os.listdir(Dir_name):
-            if(os.path.isdir(os.path.join(Dir_name, file))):
-                pass
-            else:
-                if (arges):
-                    Fuc(os.path.join(Dir_name, file), n, stopName, verbName, arges[0])
-                else:
-                    Fuc(os.path.join(Dir_name, file), n, stopName, verbName)
+            if not reflag:
+                break

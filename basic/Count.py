@@ -112,6 +112,98 @@ def CountWords(file_name,n,stopName,verbName):
         display(dicNum,'words',totalNum,3)
     print("Time Consuming:%4f" % (t1 - t0))
 
+###################################################################################
+#Name:count_words
+#Inputs:file name,the first n words, stopfile name
+#outputs:None
+#Author: Thomas
+#Date:2018.10.22
+###################################################################################
+def CountPhrases(file_name,n,stopName,verbName,k):
+    print("File name:" + file_name)
+    totalNum = 0
+    if (stopName != None):
+        stopflag = True
+    else:
+        stopflag = False
+    if(verbName != None):
+        verbflag = True
+    else:
+        verbflag = False
+    t0 = time.clock()
+    with open(file_name) as f:
+        txt = f.read()
+    txt = txt.lower()
+    txt = re.sub(r'\s+',' ',txt)
+    pword = r'(([a-z]+ )+[a-z]+)'  # extract sentence
+    pattern = re.compile(pword)
+    sentence = pattern.findall(txt)
+    txt = ','.join([sentence[m][0] for m in range(len(sentence))])
+    if(stopflag == True):
+        with open(stopName) as f:
+            stoplist = f.readlines()
+            stopNum = len(stoplist)
+    pattern = "[a-z]+[0-9]*"
+    for i in range(k-1):
+        pattern += "[\s|,][a-z]+[0-9]*"
+    wordList = []
+    for i in range(k):
+        if( i == 0 ):
+            tempList = re.findall(pattern, txt)
+        else:
+            wordpattern = "[a-z]+[0-9]*"
+            txt = re.sub(wordpattern, '', txt, 1).strip()
+            tempList = re.findall(pattern, txt)
+        wordList += tempList
+    tempc = Counter(wordList)
+    if (stopflag == True):
+        for word in stoplist:
+            word = word.replace('\n','')
+            try:
+                del tempc[word]
+            except:
+                pass
+    dicNum = {}
+    if (verbflag == True):
+        verbDic = {}
+        with open(verbName) as f:
+            for line in f.readlines():
+                key,value = line.split(' -> ')
+                for tverb in value.replace('\n', '').split(','):
+                    verbDic[tverb] = key
+                verbDic[key] = key
+        for phrase in tempc.keys():
+            if (',' not in phrase):
+                totalNum += 1
+                verba, verbb = phrase.split(' ')
+                if (verba in verbDic.keys() and verbb in verbDic.keys()):
+                    normPhrase = verbDic[verba] + ' ' + verbDic[verbb]
+                    changeFlag = True
+                elif (verba in verbDic.keys()):
+                    changeFlag = True
+                    normPhrase = verbDic[verba] + ' ' + verbb
+                elif (verbb in verbDic.keys()):
+                    changeFlag = True
+                    normPhrase =  verba + ' ' + verbDic[verbb]
+                else:
+                    changeFlag = False
+                if (changeFlag):
+                    if(normPhrase in dicNum.keys()):
+                        dicNum[normPhrase] += tempc[phrase]
+                    else:
+                        dicNum[normPhrase] = tempc[phrase]
+    else:
+        phrases = tempc.keys()
+        for phrase in phrases:
+            if (',' not in phrase):
+                dicNum[phrase] = tempc[phrase]
+                totalNum += tempc[phrase]
+    dicNum = sorted(dicNum.items(), key=lambda k: k[0])
+    dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
+    t1 = time.clock()
+    display(dicNum[:n], 'Phrases',totalNum,3)
+    print("Time Consuming:%4f" % (t1 - t0))
+
 def display(dicNum,type,totalNum,k):
     maxLen = 0
     if(not dicNum):

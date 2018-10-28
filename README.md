@@ -1,5 +1,5 @@
 
-# title: The ASE Pair Project (MSRA)
+# Title: The ASE Pair Project (MSRA)
 
 -----
 How is the 26-letter frequency of English distributed in a novel? What are the words that often appear in a type of article? What is the most commonly used term for a writer? What is the most commonly used phrase in Harry Potter, and so on. We will write some procedures to solve this problem and satisfy our curiosity.
@@ -415,6 +415,60 @@ he output example: here we use file "gone with the wind" as an exmaple:
 	--------------------------
 	Time Consuming:0.413195
 
-The words in the <STOPFILE>:  
+The words in the <STOP FILE\>:  
 the, and, to, of, she, her
+
+## STEP-3: Output the phrase's frequency
+Let's see what is a phrase:  
+Two or more English words, with only a space separating. Take a look at the following example:
+
+	Hello World//This is a phrase  
+	Hello, World//This is not a phrase
+
+### Usage
+The Arguements
+
+	usage: main.py [-h] [-f | -c | -p PHRASENUM] [-d] [-s] [-n NUM] [-x STOPFILE]
+	               path
+	
+	positional arguments:
+	  path                  The file/directory to be operated with
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -f, --countWords      Output word frequencies
+	  -c, --countChar       Output character frequencies
+	  -p PHRASENUM, --phraseNum PHRASENUM
+	                        Output phrase frequencies
+	  -d, --dirFlag         Treat the <file name> as an directory
+	  -s, --reFlag          Verb file to normalize the veb tenses
+	  -n NUM, --num NUM     Output only the top <num> iterms
+	  -x STOPFILE, --stopFile STOPFILE
+	                        Use <stop word> as a list of stop words, which are
+	                        ignored in the count
+Count the occurrences of <k\> words phrases in <file name>:
+
+```
+python mian.py -p k <file name>
+```
+
+here output example: here we use file "gone with the wind" as an exmaple:
+	
+	C:\Users\lenovo\Desktop\ASE\project>python main.py -p 2 gone_with_the_wind.txt
+	File name:gone_with_the_wind.txt
+	---------------------------------------------
+	|               The Rank List               |
+	|Phrases              |Frequency            |
+	|of the               |0.48%                |
+	|in the               |0.47%                |
+	|and the              |0.32%                |
+	|she had              |0.30%                |
+	|to the               |0.23%                |
+	|it was               |0.22%                |
+	|she was              |0.21%                |
+	|on the               |0.21%                |
+	|he was               |0.18%                |
+	|and she              |0.18%                |
+	---------------------------------------------
+	Time Consuming:1.742989
 

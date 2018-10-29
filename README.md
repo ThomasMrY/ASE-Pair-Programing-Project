@@ -573,8 +573,9 @@ Verb := <any one in any tense FROM THE DICTIONARY>
 ```
 Read the two sections above to get the list of prepositions and the verb dictionary.
 
-###Usage
+### Usage
 The Arguements
+
 	usage: main.py [-h] [-f | -c | -p PHRASENUM | -q PRENAME] [-v VERBFILE] [-d]
 	               [-s] [-n NUM] [-x STOPFILE]
 	               path

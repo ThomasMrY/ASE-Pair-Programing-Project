@@ -17,7 +17,7 @@ letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','
 #Date:2018.10.22
 ###################################################################################
 def CountLetters(file_name,n,stopName,verbName):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + os.path.abspath(file_name))
     if (stopName != None):
         stopflag = True
     else:
@@ -62,7 +62,7 @@ def CountLetters(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountWords(file_name,n,stopName,verbName):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + os.path.abspath(file_name))
     if (stopName != None):
         stopflag = True
     else:
@@ -122,7 +122,7 @@ def CountWords(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountPhrases(file_name,n,stopName,verbName,k):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + os.path.abspath(file_name))
     totalNum = 0
     if (stopName != None):
         stopflag = True
@@ -207,7 +207,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
 #Date:2018.10.22
 ###################################################################################
 def CountVerbPre(file_name,n,stopName,verbName,preName):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + os.path.abspath(file_name))
     dicNum = {}
     totalNum = 0
     if (stopName != None):
@@ -288,8 +288,9 @@ def display(dicNum,type,totalNum,k):
     formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + "}|"
     print(formatstr.format(type, "Frequency"))
     formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + ".2%}|"
-    for word, fre in dicNum:
-        print(formatstr.format(word, fre/totalNum))
+    if totalNum > 0:
+        for word, fre in dicNum:
+            print(formatstr.format(word, fre/totalNum))
     print("-" * int(2.18*k * maxLen))
 
 ###################################################################################

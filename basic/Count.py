@@ -30,19 +30,16 @@ def CountLetters(file_name,n,stopName,verbName):
     if (stopflag == True):
         with open(stopName) as f:
             stoplist = f.readlines()
-            stopNum = len(stoplist)
     with open(file_name) as f:
         txt = f.read().lower()
     for letter in letters:
         dicNum[letter] = txt.count(letter) #here count is faster than re
         totalNum += dicNum[letter]
-    for letter in letters:
-        dicNum[letter] = dicNum[letter]
     if (stopflag == True):
         for word in stoplist:
             word = word.replace('\n','')
             try:
-                del dicNum[word]
+                del tempc[word]
             except:
                 pass
     dicNum = sorted(dicNum.items(), key=lambda k: k[0])
@@ -60,7 +57,7 @@ def CountLetters(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountWords(file_name,n,stopName,verbName):
-    print("File name:" + os.path.abspath(file_name))
+    print("File name:" + sys.path[0] + "\\" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -76,7 +73,6 @@ def CountWords(file_name,n,stopName,verbName):
     if(stopflag == True):
         with open(stopName) as f:
             stoplist = f.readlines()
-            stopNum = len(stoplist)
     pattern = r"[a-z][a-z0-9]*"
     wordList = re.findall(pattern,txt)
     totalNum = len(wordList)
@@ -84,10 +80,7 @@ def CountWords(file_name,n,stopName,verbName):
     if (stopflag == True):
         for word in stoplist:
             word = word.replace('\n','')
-            try:
-                del tempc[word]
-            except:
-                pass
+            del tempc[word]
     dicNum = dict(tempc.most_common(n))
     if (verbflag == True):
         totalNum = 0
@@ -120,7 +113,7 @@ def CountWords(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountPhrases(file_name,n,stopName,verbName,k):
-    print("File name:" + os.path.abspath(file_name))
+    print("File name:" + sys.path[0] + "\\" + file_name)
     totalNum = 0
     if (stopName != None):
         stopflag = True
@@ -134,7 +127,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
     with open(file_name) as f:
         txt = f.read()
     txt = txt.lower()
-    txt = re.sub(r'\s+',' ',txt)
+    txt = re.sub(r'[\s|\']+',' ',txt)
     pword = r'(([a-z]+ )+[a-z]+)'  # extract sentence
     pattern = re.compile(pword)
     sentence = pattern.findall(txt)
@@ -142,7 +135,6 @@ def CountPhrases(file_name,n,stopName,verbName,k):
     if(stopflag == True):
         with open(stopName) as f:
             stoplist = f.readlines()
-            stopNum = len(stoplist)
     pattern = "[a-z]+[0-9]*"
     for i in range(k-1):
         pattern += "[\s|,][a-z]+[0-9]*"
@@ -159,10 +151,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
     if (stopflag == True):
         for word in stoplist:
             word = word.replace('\n','')
-            try:
-                del tempc[word]
-            except:
-                pass
+            del tempc[word]
     dicNum = {}
     if (verbflag == True):
         verbDic = {}
@@ -205,7 +194,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
 #Date:2018.10.22
 ###################################################################################
 def CountVerbPre(file_name,n,stopName,verbName,preName):
-    print("File name:" + os.path.abspath(file_name))
+    print("File name:" + sys.path[0] + "\\" + file_name)
     dicNum = {}
     totalNum = 0
     if (stopName != None):
@@ -216,7 +205,7 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
     with open(file_name) as f:
         txt = f.read()
     txt = txt.lower()
-    txt = re.sub(r'\s+',' ',txt)
+    txt = re.sub(r'[\s|\']+',' ',txt)
     pword = r'(([a-z]+ )+[a-z]+)'  # extract sentence
     pattern = re.compile(pword)
     sentence = pattern.findall(txt)
@@ -224,7 +213,6 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
     if(stopflag == True):
         with open(stopName) as f:
             stoplist = f.readlines()
-            stopNum = len(stoplist)
     pattern = "[a-z]+[0-9]*"
     for i in range(1):
         pattern += "[\s|,][a-z]+[0-9]*"
@@ -262,10 +250,7 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
     if (stopflag == True):
         for word in stoplist:
             word = word.replace('\n','')
-            try:
-                del dicNum[word]
-            except:
-                pass
+            del dicNum[word]
     dicNum = sorted(dicNum.items(), key=lambda k: k[0])
     dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
     t1 = time.clock()
@@ -274,7 +259,7 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
 
 def display(dicNum,type,totalNum,k):
     maxLen = 0
-    if(not dicNum):
+    if (totalNum <= 0):
         print("Error:Nothing matched!!")
         return
     for word, fre in dicNum:
@@ -286,9 +271,8 @@ def display(dicNum,type,totalNum,k):
     formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + "}|"
     print(formatstr.format(type, "Frequency"))
     formatstr = "|{:" + str(k*maxLen) + "}|{:<" + str(k*maxLen) + ".2%}|"
-    if totalNum > 0:
-        for word, fre in dicNum:
-            print(formatstr.format(word, fre/totalNum))
+    for word, fre in dicNum:
+        print(formatstr.format(word, fre/totalNum))
     print("-" * int(2.18*k * maxLen))
 
 ###################################################################################

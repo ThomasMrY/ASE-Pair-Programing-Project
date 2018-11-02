@@ -5,6 +5,8 @@ import time
 from collections import Counter
 import os
 
+
+
 letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
           #,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
@@ -16,7 +18,7 @@ letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','
 #Date:2018.10.22
 ###################################################################################
 def CountLetters(file_name,n,stopName,verbName):
-    print("File name:" + os.path.abspath(file_name))
+    print("File name:" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -40,14 +42,14 @@ def CountLetters(file_name,n,stopName,verbName):
         for word in stoplist:
             word = word.replace('\n','')
             try:
-                del dicNum[word]
+                del tempc[word]
             except:
                 pass
     dicNum = sorted(dicNum.items(), key=lambda k: k[0])
     dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
     t1 = time.clock()
-    display(dicNum[:n],'character',totalNum,9)
-    print("Time Consuming:%4f" % (t1 - t0))
+    display_at(dicNum[:n],'character',totalNum,9)
+    # print("Time Consuming:%4f" % (t1 - t0))
 
 
 ###################################################################################
@@ -58,7 +60,7 @@ def CountLetters(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountWords(file_name,n,stopName,verbName):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + file_name)
     if (stopName != None):
         stopflag = True
     else:
@@ -101,10 +103,10 @@ def CountWords(file_name,n,stopName,verbName):
     dicNum = sorted(dicNum, key=lambda k:k[1], reverse=True)
     t1 = time.clock()
     if (verbflag == True):
-        display(verbDicNum[:n], 'words',totalNum,3)
+        display_at(verbDicNum[:n], 'words',totalNum,3)
     else:
-        display(dicNum,'words',totalNum,3)
-    print("Time Consuming:%4f" % (t1 - t0))
+        display_at(dicNum,'words',totalNum,3)
+    # print("Time Consuming:%4f" % (t1 - t0))
 
 ###################################################################################
 #Name:count_words
@@ -114,7 +116,7 @@ def CountWords(file_name,n,stopName,verbName):
 #Date:2018.10.22
 ###################################################################################
 def CountPhrases(file_name,n,stopName,verbName,k):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + file_name)
     totalNum = 0
     if (stopName != None):
         stopflag = True
@@ -128,7 +130,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
     with open(file_name) as f:
         txt = f.read()
     txt = txt.lower()
-    txt = re.sub(r'\s+',' ',txt)
+    txt = re.sub(r'[\s|\']+',' ',txt)
     pword = r'(([a-z]+ )+[a-z]+)'  # extract sentence
     pattern = re.compile(pword)
     sentence = pattern.findall(txt)
@@ -184,8 +186,8 @@ def CountPhrases(file_name,n,stopName,verbName,k):
     dicNum = sorted(dicNum.items(), key=lambda k: k[0])
     dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
     t1 = time.clock()
-    display(dicNum[:n], 'Phrases',totalNum,3)
-    print("Time Consuming:%4f" % (t1 - t0))
+    display_at(dicNum[:n], 'Phrases',totalNum,3)
+    # print("Time Consuming:%4f" % (t1 - t0))
 
 ###################################################################################
 #Name:count_words
@@ -195,7 +197,7 @@ def CountPhrases(file_name,n,stopName,verbName,k):
 #Date:2018.10.22
 ###################################################################################
 def CountVerbPre(file_name,n,stopName,verbName,preName):
-    print("File name:" + sys.path[0] + "\\" + file_name)
+    print("File name:" + file_name)
     dicNum = {}
     totalNum = 0
     if (stopName != None):
@@ -206,7 +208,7 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
     with open(file_name) as f:
         txt = f.read()
     txt = txt.lower()
-    txt = re.sub(r'\s+',' ',txt)
+    txt = re.sub(r'[\s|\']+',' ',txt)
     pword = r'(([a-z]+ )+[a-z]+)'  # extract sentence
     pattern = re.compile(pword)
     sentence = pattern.findall(txt)
@@ -255,12 +257,12 @@ def CountVerbPre(file_name,n,stopName,verbName,preName):
     dicNum = sorted(dicNum.items(), key=lambda k: k[0])
     dicNum = sorted(dicNum, key=lambda k: k[1], reverse=True)
     t1 = time.clock()
-    display(dicNum[:n], 'VerbPre',totalNum, 3)
-    print("Time Consuming:%4f"%(t1-t0))
+    display_at(dicNum[:n], 'VerbPre',totalNum, 3)
+    # print("Time Consuming:%4f"%(t1-t0))
 
 def display(dicNum,type,totalNum,k):
     maxLen = 0
-    if(totalNum <= 0):
+    if (totalNum <= 0):
         print("Error:Nothing matched!!")
         return
     for word, fre in dicNum:
@@ -275,6 +277,14 @@ def display(dicNum,type,totalNum,k):
     for word, fre in dicNum:
         print(formatstr.format(word, fre/totalNum))
     print("-" * int(2.18*k * maxLen))
+
+def display_at(dicNum,type,totalNum,k):
+    if type == 'character':
+        for word, fre in dicNum:
+            print("%40s\t"%(word)+"{:.2%}".format(fre/totalNum))
+    else:
+        for word, fre in dicNum:
+            print("%40s\t%d"%(word,fre))
 
 ###################################################################################
 #Name:CountWordsInDir

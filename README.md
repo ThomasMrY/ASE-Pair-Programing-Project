@@ -1,5 +1,5 @@
 
-# Title: The ASE Pair Project (MSRA)
+# Title: The ASE Pair Project
 
 -----
 How is the 26-letter frequency of English distributed in a novel? What are the words that often appear in a type of article? What is the most commonly used term for a writer? What is the most commonly used phrase in Harry Potter, and so on. We will write some procedures to solve this problem and satisfy our curiosity.
